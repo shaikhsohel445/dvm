@@ -166,6 +166,37 @@
     <script>
         let voteCount = 0;
 
+        // Visitor Counter Logic
+        function updateVisitorCounter() {
+            let visitorCount = localStorage.getItem("visitorCount");
+            if (!visitorCount) {
+                visitorCount = 1;
+            } else {
+                visitorCount = parseInt(visitorCount) + 1;
+            }
+            localStorage.setItem("visitorCount", visitorCount);
+            document.getElementById("visitorCounter").innerText = visitorCount;
+        }
+
+        // Call visitor counter function on page load
+        updateVisitorCounter();
+
+        // Share functionality
+        function sharePage() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Election Voting Demo',
+                    text: 'Check out this demo voting page!',
+                    url: window.location.href
+                })
+                .then(() => console.log('Page shared successfully'))
+                .catch((error) => console.log('Error sharing page:', error));
+            } else {
+                alert('Sharing is not supported on this browser.');
+            }
+        }
+
+
         function countVote() {
             // Check if the user has already voted (simulated IP restriction using localStorage)
             if (localStorage.getItem("hasVoted")) {
