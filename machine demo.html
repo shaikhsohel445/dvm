@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Election Voting UI</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: #fff;
+            padding: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 18px;
+            color: #333;
+        }
+        .sub-header {
+            background-color: #3f3fe2;
+            color: white;
+            padding: 5px;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .alert {
+            background-color: #ff5722;
+            color: white;
+            padding: 5px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        .share-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        .share-btn:hover {
+            background-color: #218838;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .table th, .table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+            font-size: 14px;
+        }
+        .table th {
+            background-color: #f2f2f2;
+        }
+        .candidate-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+        .symbol-img {
+            width: 40px;
+            height: 40px;
+        }
+        .bulb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: green;
+            display: inline-block;
+        }
+        .bulb.red {
+            background-color: red;
+        }
+        .vote-btn {
+            padding: 8px 15px;
+            background-color: #3f3fe2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .vote-btn:hover {
+            background-color: #3232cc;
+        }
+        .footer {
+            font-size: 12px;
+            color: #555;
+            margin-top: 15px;
+        }
+        .footer a {
+            color: #3f3fe2;
+            text-decoration: none;
+        }
+        .counter {
+            font-size: 16px;
+            color: #333;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>१६- परभणी विधानसभा सार्वत्रिक निवडणूक २०२४</h1>
+            <p>डेमो मतदान यंत्र</p>
+        </div>
+        <div class="sub-header">डेमो मतदानासाठी मशाल निशाणी समोरील निळे बटण दाबावे</div>
+        <div class="alert">मतदानाच्या दिवशी सुध्दा मशाल समोरील निळे बटण दाबावे</div>
+        <button class="share-btn">SHARE</button>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>S.No.</th>
+                    <th>Name of Candidate</th>
+                    <th>Election Symbol</th>
+                    <th>Bulb</th>
+                    <th>Button</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>२</td>
+                    <td>
+                        <img src="images.jpg" alt="Candidate" class="candidate-img"><br>
+                        abcd
+                    </td>
+                    <td><img src="download.jpg" alt="Symbol" class="symbol-img"></td>
+                    <td><div class="bulb" id="bulb"></div></td>
+                    <td><button class="vote-btn" onclick="countVote()">बटन दाबा</button></td>
+                </tr>
+                <!-- Additional candidates can be added here -->
+            </tbody>
+        </table>
+        <div class="counter">Total Votes Counted: <span id="voteCounter">0</span></div>
+        <div class="footer">
+            <p>2024 © <a href="#">Shaikh sohel</a> Crafted with ❤️ by <a href="tel:+919175612025">+91 9175612025</a></p>
+        </div>
+    </div>
+
+    <!-- Audio for vote count confirmation -->
+    <audio id="beepSound" src="/beep.mp3"></audio>
+    <audio id="voteSound" src="/demo sound.mp3"></audio>
+
+    <script>
+        let voteCount = 0;
+
+        function countVote() {
+            // Check if the user has already voted (simulated IP restriction using localStorage)
+            if (localStorage.getItem("hasVoted")) {
+                alert("You have already voted!");
+                return;
+            }
+
+            // Increment the vote count
+            voteCount++;
+            document.getElementById("voteCounter").innerText = voteCount;
+
+            // Play the beep sound first
+            const beepSound = document.getElementById("beepSound");
+            beepSound.play();
+
+            // After beep sound, play the vote counted sound
+            beepSound.onended = function() {
+                const voteSound = document.getElementById("voteSound");
+                voteSound.play();
+            };
+
+            // Change bulb color to red for 5 seconds, then back to green
+            const bulb = document.getElementById("bulb");
+            bulb.classList.add("red");
+            setTimeout(() => {
+                bulb.classList.remove("red");
+            }, 5000);
+
+            // Set localStorage to mark that the user has voted
+            localStorage.setItem("hasVoted", "true");
+        }
+    </script>
+</body>
+</html>
