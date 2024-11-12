@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +10,6 @@
             margin: 0;
             padding: 0;
         }
-
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -19,7 +17,6 @@
             justify-content: center;
             padding: 20px;
         }
-
         .container {
             width: 100%;
             max-width: 800px;
@@ -28,12 +25,10 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
-
         .header h1 {
             font-size: 18px;
             color: #333;
         }
-
         .sub-header {
             background-color: #3f3fe2;
             color: white;
@@ -41,7 +36,6 @@
             font-size: 14px;
             margin-top: 5px;
         }
-
         .alert {
             background-color: #ff5722;
             color: white;
@@ -49,7 +43,6 @@
             margin: 10px 0;
             font-size: 14px;
         }
-
         .share-btn {
             background-color: #28a745;
             color: white;
@@ -60,40 +53,32 @@
             cursor: pointer;
             margin-bottom: 15px;
         }
-
         .share-btn:hover {
             background-color: #218838;
         }
-
         .table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
         }
-
-        .table th,
-        .table td {
+        .table th, .table td {
             padding: 10px;
             border: 1px solid #ddd;
             text-align: center;
             font-size: 14px;
         }
-
         .table th {
             background-color: #f2f2f2;
         }
-
         .candidate-img {
             width: 50px;
             height: 50px;
             border-radius: 50%;
         }
-
         .symbol-img {
             width: 40px;
             height: 40px;
         }
-
         .bulb {
             width: 20px;
             height: 20px;
@@ -101,11 +86,9 @@
             background-color: green;
             display: inline-block;
         }
-
         .bulb.red {
             background-color: red;
         }
-
         .vote-btn {
             padding: 8px 15px;
             background-color: #3f3fe2;
@@ -115,22 +98,18 @@
             cursor: pointer;
             font-size: 14px;
         }
-
         .vote-btn:hover {
             background-color: #3232cc;
         }
-
         .footer {
             font-size: 12px;
             color: #555;
             margin-top: 15px;
         }
-
         .footer a {
             color: #3f3fe2;
             text-decoration: none;
         }
-
         .counter {
             font-size: 16px;
             color: #333;
@@ -139,7 +118,6 @@
         }
     </style>
 </head>
-
 <body>
     <div class="container">
         <div class="header">
@@ -167,9 +145,7 @@
                         abcd
                     </td>
                     <td><img src="download.jpg" alt="Symbol" class="symbol-img"></td>
-                    <td>
-                        <div class="bulb" id="bulb"></div>
-                    </td>
+                    <td><div class="bulb" id="bulb"></div></td>
                     <td><button class="vote-btn" onclick="countVote()">बटन दाबा</button></td>
                 </tr>
                 <!-- Additional candidates can be added here -->
@@ -187,52 +163,23 @@
     <audio id="beepSound" src="/beep.mp3"></audio>
     <audio id="voteSound" src="/demo sound.mp3"></audio>
 
-    <!-- Firebase Setup -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
     <script>
-        // Firebase Configuration
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-        const firebaseConfig = {
-            apiKey: "AIzaSyCl5Lk_wpaj37DEJS_4wMhdnuk2Vzr1img",
-            authDomain: "dummyvoteapp.firebaseapp.com",
-            databaseURL: "https://dummyvoteapp-default-rtdb.firebaseio.com",
-            projectId: "dummyvoteapp",
-            storageBucket: "dummyvoteapp.firebasestorage.app",
-            messagingSenderId: "400161740997",
-            appId: "1:400161740997:web:818740d909ce0c888cf8ac",
-            measurementId: "G-2CZ3JSSDX4"
-        };
-
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const database = firebase.database(app);
-
         let voteCount = 0;
 
-        // Fetch vote and visitor count from Firebase
-        function fetchCounts() {
-            const voteRef = database.ref('voteCount');
-            const visitorRef = database.ref('visitorCount');
-
-            voteRef.on('value', (snapshot) => {
-                voteCount = snapshot.val() || 0;
-                document.getElementById("voteCounter").innerText = voteCount;
-            });
-
-            visitorRef.on('value', (snapshot) => {
-                const visitorCount = snapshot.val() || 0;
-                document.getElementById("visitorCounter").innerText = visitorCount;
-            });
-        }
-
-        // Update the visitor counter in Firebase
+        // Visitor Counter Logic
         function updateVisitorCounter() {
-            const visitorRef = database.ref('visitorCount');
-            visitorRef.transaction(currentValue => {
-                return (currentValue || 0) + 1;
-            });
+            let visitorCount = localStorage.getItem("visitorCount");
+            if (!visitorCount) {
+                visitorCount = 1;
+            } else {
+                visitorCount = parseInt(visitorCount) + 1;
+            }
+            localStorage.setItem("visitorCount", visitorCount);
+            document.getElementById("visitorCounter").innerText = visitorCount;
         }
+
+        // Call visitor counter function on page load
+        updateVisitorCounter();
 
         // Share functionality
         function sharePage() {
@@ -242,14 +189,14 @@
                     text: 'Check out this demo voting page!',
                     url: window.location.href
                 })
-                    .then(() => console.log('Page shared successfully'))
-                    .catch((error) => console.log('Error sharing page:', error));
+                .then(() => console.log('Page shared successfully'))
+                .catch((error) => console.log('Error sharing page:', error));
             } else {
                 alert('Sharing is not supported on this browser.');
             }
         }
 
-        // Increment vote and store it in Firebase
+
         function countVote() {
             // Check if the user has already voted (simulated IP restriction using localStorage)
             if (localStorage.getItem("hasVoted")) {
@@ -266,7 +213,7 @@
             beepSound.play();
 
             // After beep sound, play the vote counted sound
-            beepSound.onended = function () {
+            beepSound.onended = function() {
                 const voteSound = document.getElementById("voteSound");
                 voteSound.play();
             };
@@ -278,17 +225,9 @@
                 bulb.classList.remove("red");
             }, 5000);
 
-            // Store the vote in Firebase
-            database.ref('voteCount').set(voteCount);
-
-            // Mark that the user has voted in localStorage
-            localStorage.setItem("hasVoted", true);
+            // Set localStorage to mark that the user has voted
+            localStorage.setItem("hasVoted", "true");
         }
-
-        // Initialize the visitor count when the page loads
-        updateVisitorCounter();
-        fetchCounts();
     </script>
 </body>
-
 </html>
