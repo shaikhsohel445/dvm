@@ -172,14 +172,12 @@
                     </td>
                     <td><button class="vote-btn" onclick="countVote()">बटन दाबा</button></td>
                 </tr>
-                <!-- Additional candidates can be added here -->
             </tbody>
         </table>
         <div class="counter">Total Votes Counted: <span id="voteCounter">0</span></div>
-        <!-- Visitor Counter -->
         <div class="counter">Visitor Counter: <span id="visitorCounter">0</span></div>
         <div class="footer">
-            <p>2024 © <a href="#">Shaikh sohel</a> Crafted with ❤️ by <a href="tel:+919175612025">+91 9175612025</a></p>
+            <p>2024 © <a href="#">Shaikh Sohel</a> Crafted with ❤️ by <a href="tel:+919175612025">+91 9175612025</a></p>
         </div>
     </div>
 
@@ -187,11 +185,15 @@
     <audio id="beepSound" src="/beep.mp3"></audio>
     <audio id="voteSound" src="/demo sound.mp3"></audio>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.16.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.16.0/firebase-database.js"></script>
+    <!-- Firebase SDKs
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script> -->
+
+    <script src="https://www.gstatic.com/firebasejs/9.13.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.13.0/firebase-database.js"></script>
+
     <script>
-        // Your Firebase Config (replace with your credentials)
+        // Your Firebase Configuration
         // For Firebase JS SDK v7.20.0 and later, measurementId is optional
         const firebaseConfig = {
             apiKey: "AIzaSyCl5Lk_wpaj37DEJS_4wMhdnuk2Vzr1img",
@@ -206,15 +208,18 @@
 
         // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.database(app);
+        const database = firebase.database(app);
 
         let voteCount = 0;
 
         // Visitor Counter Logic
         function updateVisitorCounter() {
-            const visitorRef = db.ref("visitorCount");
-            visitorRef.once('value').then(snapshot => {
-                let visitorCount = snapshot.val() || 0;
+            const visitorRef = database.ref('visitorCount');
+            visitorRef.once('value', (snapshot) => {
+                let visitorCount = snapshot.val();
+                if (!visitorCount) {
+                    visitorCount = 0;
+                }
                 visitorCount++;
                 visitorRef.set(visitorCount);
                 document.getElementById("visitorCounter").innerText = visitorCount;
@@ -270,9 +275,17 @@
             // Set localStorage to mark that the user has voted
             localStorage.setItem("hasVoted", "true");
 
-            // Update Firebase vote count
-            const voteRef = db.ref("voteCount");
-            voteRef.set(voteCount);
+            // Update vote count in Realtime Database
+            const voteRef = database.ref('voteCount');
+            voteRef.once('value', (snapshot) => {
+                let currentVoteCount = snapshot.val();
+                if (!currentVoteCount) {
+                    currentVoteCount = 0;
+                }
+                currentVoteCount++;
+                voteRef.set(currentVoteCount);
+                document.getElementById("voteCounter").innerText = currentVoteCount;
+            });
         }
     </script>
 </body>
