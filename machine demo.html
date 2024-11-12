@@ -187,11 +187,11 @@
     <audio id="beepSound" src="/beep.mp3"></audio>
     <audio id="voteSound" src="/demo sound.mp3"></audio>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.16.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.16.0/firebase-database.js"></script>
+    <!-- Firebase Setup -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
     <script>
-        // Your Firebase Config (replace with your credentials)
+        // Firebase Configuration
         // For Firebase JS SDK v7.20.0 and later, measurementId is optional
         const firebaseConfig = {
             apiKey: "AIzaSyCl5Lk_wpaj37DEJS_4wMhdnuk2Vzr1img",
@@ -206,23 +206,33 @@
 
         // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.database(app);
+        const database = firebase.database(app);
 
         let voteCount = 0;
 
-        // Visitor Counter Logic
-        function updateVisitorCounter() {
-            const visitorRef = db.ref("visitorCount");
-            visitorRef.once('value').then(snapshot => {
-                let visitorCount = snapshot.val() || 0;
-                visitorCount++;
-                visitorRef.set(visitorCount);
+        // Fetch vote and visitor count from Firebase
+        function fetchCounts() {
+            const voteRef = database.ref('voteCount');
+            const visitorRef = database.ref('visitorCount');
+
+            voteRef.on('value', (snapshot) => {
+                voteCount = snapshot.val() || 0;
+                document.getElementById("voteCounter").innerText = voteCount;
+            });
+
+            visitorRef.on('value', (snapshot) => {
+                const visitorCount = snapshot.val() || 0;
                 document.getElementById("visitorCounter").innerText = visitorCount;
             });
         }
 
-        // Call visitor counter function on page load
-        updateVisitorCounter();
+        // Update the visitor counter in Firebase
+        function updateVisitorCounter() {
+            const visitorRef = database.ref('visitorCount');
+            visitorRef.transaction(currentValue => {
+                return (currentValue || 0) + 1;
+            });
+        }
 
         // Share functionality
         function sharePage() {
@@ -239,6 +249,7 @@
             }
         }
 
+        // Increment vote and store it in Firebase
         function countVote() {
             // Check if the user has already voted (simulated IP restriction using localStorage)
             if (localStorage.getItem("hasVoted")) {
@@ -267,13 +278,16 @@
                 bulb.classList.remove("red");
             }, 5000);
 
-            // Set localStorage to mark that the user has voted
-            localStorage.setItem("hasVoted", "true");
+            // Store the vote in Firebase
+            database.ref('voteCount').set(voteCount);
 
-            // Update Firebase vote count
-            const voteRef = db.ref("voteCount");
-            voteRef.set(voteCount);
+            // Mark that the user has voted in localStorage
+            localStorage.setItem("hasVoted", true);
         }
+
+        // Initialize the visitor count when the page loads
+        updateVisitorCounter();
+        fetchCounts();
     </script>
 </body>
 
